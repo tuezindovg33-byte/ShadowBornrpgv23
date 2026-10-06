@@ -91,6 +91,8 @@ function defaultAdminSave() {
 // Conteúdo criado pelos admins, buscado da planilha (compartilhado com
 // todo mundo). Fica em cache aqui depois do primeiro carregamento.
 let adminData = defaultAdminSave()
+let npcEditV237 = null
+let phaseEditV237 = null
 
 // Converte o registro cru da planilha ({id, nome, config}) no formato
 // que o resto do jogo já espera (mesmo shape que era usado no localStorage)
@@ -138,7 +140,7 @@ async function refreshAdminContentFromServer() {
 }
 
 function getAllNpcTypes() {
-    return BUILTIN_NPC_TYPES.concat(adminData.npcTypes, adminData.bossTypes || [])
+    return [...new Map(BUILTIN_NPC_TYPES.concat(adminData.npcTypes, adminData.bossTypes || []).map(t => [t.id, t])).values()]
 }
 
 function getNpcTypeById(id) {
@@ -252,6 +254,7 @@ function buildPixelGridDom() {
             cell.className = "pixel-cell"
             cell.dataset.x = x
             cell.dataset.y = y
+            cell.style.background = pixelGrid[y][x] || "transparent"
 
             const paint = () => {
                 pixelGrid[y][x] = isErasing ? null : paintColor
@@ -321,6 +324,7 @@ function renderAdminNpcList() {
         el.appendChild(row)
     })
 
+    addEditButtonsV237(el, getAllNpcTypes(), editNpcV237)
     el.querySelectorAll(".admin-delete-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
             if (!currentUser) return
@@ -329,7 +333,7 @@ function renderAdminNpcList() {
             const action = npc && npc.isBoss ? "removerBoss" : "removerNpc"
             const res = await apiCall(action, { adminID: currentUser.id, id: btn.dataset.id })
             if (!res.sucesso) alert(res.mensagem)
-            await refreshNpcsFromServer()
+            await refreshAdminContentFromServer()
             renderAdminNpcList()
             if (typeof refreshAdminSelects === "function") refreshAdminSelects()
         })
@@ -344,6 +348,7 @@ function parseAdminDrops(text) {
 }
 
 async function saveNewNpc() {
+    if (document.getElementById("admin-save-npc").disabled) return
     if (!currentUser || currentUser.role !== "admin") {
         alert("Você precisa estar logado como admin pra salvar um NPC.")
         return
@@ -362,8 +367,9 @@ async function saveNewNpc() {
         return
     }
 
-    if (imageUrl && !/^(https?:\/\/|data:image\/png;base64,)/i.test(imageUrl)) { alert("Use um link HTTP/HTTPS direto ou uma imagem do computador."); return }
+    if (imageUrl && !/^(https?:\/\/|\.\.?\/|\/|data:image\/(?:png;base64,|svg\+xml;utf8,))/i.test(imageUrl)) { alert("Use um link HTTP/HTTPS direto ou uma imagem do computador."); return }
     const config = {
+        ...(npcEditV237 || {}),
         isBoss: document.getElementById("admin-npc-isboss").checked,
         spriteFacing: document.getElementById("v17-npc-facing")?.value||"right",
         health: Number(document.getElementById("admin-npc-health").value) || 30,
@@ -376,19 +382,23 @@ async function saveNewNpc() {
         ai: window.ShadowCombat?.readAdminAI()
     }
 
+    delete config.id; delete config.name; delete config.builtin
     const saveBtn = document.getElementById("admin-save-npc")
     saveBtn.disabled = true
     saveBtn.textContent = "Salvando..."
 
     // NPC comum vai para NpcTypes; Boss vai para a aba Bosses.
+    if (npcEditV237 && !npcEditV237.builtin) config.isBoss = npcEditV237.isBoss
     const action = config.isBoss ? "salvarBoss" : "salvarNpc"
-    const res = await apiCall(action, { adminID: currentUser.id, nome: name, config })
+    let res
+    try { res = await apiCall(action, { adminID: currentUser.id, id: npcEditV237 && !npcEditV237.builtin ? npcEditV237.id : undefined, nome: name, config }) }
+    catch (e) { res = { sucesso:false, mensagem:e.message || "Falha de conexão. Tente novamente." } }
 
     saveBtn.disabled = false
     saveBtn.textContent = "💾 Salvar NPC"
 
-    if (!res.sucesso) {
-        alert("Erro ao salvar: " + res.mensagem)
+    if (!res?.sucesso) {
+        alert("Erro ao salvar: " + (res?.mensagem || "Resposta inválida. Tente novamente."))
         return
     }
 
@@ -398,6 +408,9 @@ async function saveNewNpc() {
     if (document.getElementById("admin-npc-image-url")) document.getElementById("admin-npc-image-url").value = ""
     if (document.getElementById("admin-npc-image-preview")) document.getElementById("admin-npc-image-preview").removeAttribute("src")
     if (document.getElementById("admin-npc-drops")) document.getElementById("admin-npc-drops").value = ""
+    npcEditV237 = null
+    document.getElementById("admin-npc-isboss").disabled = false
+    document.getElementById("admin-save-npc-edit-tools")?.remove()
     resetPixelEditor()
     document.getElementById("v16-npc-drops")?.setDrops([])
 
@@ -457,6 +470,9 @@ function renderPhaseSpawnsDraft() {
 }
 
 function resetPhaseDraft() {
+    phaseEditV237 = null
+    document.getElementById("admin-save-phase-edit-tools")?.remove()
+    document.getElementById("v237-boss-x")?.parentElement.remove()
     phaseSpawnsBeingEdited = []
     renderPhaseSpawnsDraft()
     document.getElementById("admin-phase-name").value = ""
@@ -485,6 +501,7 @@ function renderAdminPhaseList() {
         el.appendChild(row)
     })
 
+    addEditButtonsV237(el, getAllPhases(), editPhaseV237)
     el.querySelectorAll(".admin-delete-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
             if (!currentUser) return
@@ -499,6 +516,7 @@ function renderAdminPhaseList() {
 }
 
 async function saveNewPhase() {
+    if (document.getElementById("admin-save-phase").disabled) return
     if (!currentUser || currentUser.role !== "admin") {
         alert("Você precisa estar logado como admin pra salvar uma fase.")
         return
@@ -528,6 +546,7 @@ async function saveNewPhase() {
     const bossType = hasBoss ? getNpcTypeById(bossSelect.value) : null
 
     const config = {
+        ...(phaseEditV237 || {}),
         schemaVersion: 3,
         mapKind: document.getElementById("v16-map-kind")?.value || "exploration",
         previousPhaseId: document.getElementById("v16-previous")?.value || "",
@@ -536,7 +555,7 @@ async function saveNewPhase() {
         worldWidth: 1024 * widthScreens,
         spawns: spawnSnapshots,
         bossTypeId: hasBoss ? bossSelect.value : null,
-        bossX: hasBoss ? (1024 * widthScreens - 500) : null,
+        bossX: hasBoss ? Number(document.getElementById("v237-boss-x")?.value || (1024 * widthScreens - 500)) : null,
         bossSnapshot: bossType ? JSON.parse(JSON.stringify(bossType)) : null
     }
 
@@ -550,17 +569,20 @@ async function saveNewPhase() {
         config.bgValue = url || "./assets/background/placeholder.png"
     }
 
+    delete config.id; delete config.name; delete config.builtin
     const saveBtn = document.getElementById("admin-save-phase")
     saveBtn.disabled = true
     saveBtn.textContent = "Salvando..."
 
-    const res = await apiCall("salvarFase", { adminID: currentUser.id, nome: name, config })
+    let res
+    try { res = await apiCall("salvarFase", { adminID: currentUser.id, id: phaseEditV237 && !phaseEditV237.builtin ? phaseEditV237.id : undefined, nome: name, config }) }
+    catch (e) { res = { sucesso:false, mensagem:e.message || "Falha de conexão. Tente novamente." } }
 
     saveBtn.disabled = false
     saveBtn.textContent = "💾 Salvar Fase"
 
-    if (!res.sucesso) {
-        alert("Erro ao salvar: " + res.mensagem)
+    if (!res?.sucesso) {
+        alert("Erro ao salvar: " + (res?.mensagem || "Resposta inválida. Tente novamente."))
         return
     }
 
@@ -582,3 +604,121 @@ window.refreshAdminContentFromServer = refreshAdminContentFromServer;
 window.getAllNpcTypes = getAllNpcTypes;
 window.getNpcTypeById = getNpcTypeById;
 window.getNpcSpriteSrc = getNpcSpriteSrc;
+
+// V23.7: editing uses existing IDs and retains fields added by other systems.
+function setFieldV237(id, value) {
+    const el = document.getElementById(id)
+    if (el) el.value = value ?? ""
+}
+function addEditButtonsV237(list, entries, edit) {
+    list.style.setProperty("overflow-x", "hidden")
+    Array.from(list.children).forEach((row, i) => {
+        const entry = entries[i]
+        if (!entry) return
+        row.style.setProperty("display", "flex", "important")
+        row.style.setProperty("flex-wrap", "wrap", "important")
+        row.style.setProperty("gap", "10px", "important")
+        row.style.setProperty("align-items", "center", "important")
+        row.style.setProperty("min-width", "0", "important")
+        const info = row.querySelector(".admin-list-info")
+        if (info) {
+            info.style.setProperty("flex", "1 1 180px", "important")
+            info.style.setProperty("min-width", "0", "important")
+            info.style.setProperty("overflow-wrap", "anywhere", "important")
+        }
+        const thumb = row.querySelector(".admin-list-thumb")
+        if (thumb) thumb.style.setProperty("flex", "0 0 48px", "important")
+        const remove = row.querySelector(".admin-delete-btn")
+        if (remove) {
+            remove.textContent = "Excluir"
+            remove.style.setProperty("width", "auto", "important")
+            remove.style.setProperty("flex", "0 0 auto", "important")
+            remove.style.setProperty("min-width", "80px", "important")
+            remove.style.setProperty("margin", "0", "important")
+        }
+        const button = document.createElement("button")
+        button.type = "button"
+        button.className = "btn btn-ghost"
+        button.textContent = entry.builtin ? "Personalizar cópia" : "Editar"
+        button.onclick = () => edit(entry)
+        button.style.setProperty("width", "auto", "important")
+        button.style.setProperty("flex", "0 0 auto", "important")
+        button.style.setProperty("min-width", "90px", "important")
+        button.style.setProperty("margin", "0", "important")
+        if (remove) row.insertBefore(button, remove)
+        else row.appendChild(button)
+    })
+}
+function editingToolsV237(buttonId, cancel, text) {
+    const save = document.getElementById(buttonId)
+    let tools = document.getElementById(buttonId + "-edit-tools")
+    if (!tools) {
+        tools = document.createElement("div")
+        tools.id = buttonId + "-edit-tools"
+        save.before(tools)
+    }
+    tools.replaceChildren()
+    const label = document.createElement("p")
+    label.textContent = text
+    const button = document.createElement("button")
+    button.type = "button"; button.className = "btn btn-ghost"
+    button.textContent = "Cancelar edição / Novo"
+    button.onclick = () => { cancel(); tools.remove(); save.textContent = "Salvar" }
+    tools.append(label, button)
+    save.textContent = "Salvar alterações"
+}
+function editNpcV237(type) {
+    npcEditV237 = JSON.parse(JSON.stringify(type))
+    setFieldV237("admin-npc-name", type.name)
+    const boss = document.getElementById("admin-npc-isboss")
+    boss.checked = !!type.isBoss
+    boss.disabled = !type.builtin
+    for (const key of ["health", "damage", "speed", "scale"]) setFieldV237("admin-npc-" + key, type[key])
+    setFieldV237("v17-npc-facing", type.spriteFacing || "right")
+    setFieldV237("admin-npc-image-url", type.imageUrl || (type.svg ? "data:image/svg+xml;utf8," + encodeURIComponent(type.svg) : ""))
+    pixelGrid = type.pixels ? type.pixels.map(r => r.slice()) : createEmptyPixelGrid()
+    buildPixelGridDom()
+    document.getElementById("admin-npc-image-url")?.dispatchEvent(new Event("input", {bubbles:true}))
+    window.ShadowCombat?.renderAdminAI(type.ai)
+    const drops = type.drops || []
+    setFieldV237("admin-npc-drops", drops.map(d => [d.itemId,d.chance,d.min,d.max].join(",")).join("\n"))
+    document.getElementById("v16-npc-drops")?.setDrops(drops)
+    editingToolsV237("admin-save-npc", () => {
+        npcEditV237 = null; boss.disabled = false; boss.checked = false
+        setFieldV237("admin-npc-name", ""); setFieldV237("admin-npc-image-url", "")
+        setFieldV237("admin-npc-drops", ""); document.getElementById("v16-npc-drops")?.setDrops([])
+        resetPixelEditor(); window.ShadowCombat?.renderAdminAI()
+    }, type.builtin ? "Será criada uma cópia editável do modelo padrão." : "Editando: " + type.name + " · ID: " + type.id)
+    document.getElementById("admin-npc-name")?.scrollIntoView({block:"center", behavior:"smooth"})
+}
+function editPhaseV237(phase) {
+    phaseEditV237 = JSON.parse(JSON.stringify(phase))
+    setFieldV237("admin-phase-name", phase.name)
+    setFieldV237("admin-phase-width", phase.worldWidth / 1024)
+    setFieldV237("admin-phase-bg-url", phase.bgValue || "")
+    setFieldV237("admin-phase-color-top", phase.bgColors?.top || "#4a3b63")
+    setFieldV237("admin-phase-color-bottom", phase.bgColors?.bottom || "#1a1424")
+    setFieldV237("v16-map-kind", phase.mapKind || "exploration")
+    document.getElementById("v16-map-kind")?.dispatchEvent(new Event("change", {bubbles:true}))
+    setFieldV237("v16-previous", phase.previousPhaseId || "")
+    setFieldV237("v16-ground", phase.groundSource ?? .773)
+    const radio = document.querySelector('input[name="bgType"][value="' + (phase.bgType === "gradient" ? "gradient" : "image") + '"]')
+    if (radio) { radio.checked = true; radio.dispatchEvent(new Event("change", {bubbles:true})) }
+    phaseSpawnsBeingEdited = (phase.spawns || []).map(s => ({...s}))
+    renderPhaseSpawnsDraft()
+    const hasBoss = document.getElementById("admin-phase-has-boss")
+    hasBoss.checked = !!phase.bossTypeId
+    hasBoss.dispatchEvent(new Event("change", {bubbles:true}))
+    setFieldV237("admin-phase-boss-type", phase.bossTypeId || "")
+    let position = document.getElementById("v237-boss-x")
+    if (!position) {
+        const label = document.createElement("label")
+        label.textContent = "Posição X do boss (px) "
+        position = document.createElement("input")
+        position.id = "v237-boss-x"; position.type = "number"; position.min = "0"; position.className = "admin-input"
+        label.appendChild(position); document.getElementById("admin-save-phase").before(label)
+    }
+    position.value = phase.bossX ?? phase.worldWidth - 500
+    editingToolsV237("admin-save-phase", resetPhaseDraft, phase.builtin ? "Será criada uma cópia editável do mapa padrão." : "Editando: " + phase.name + " · ID: " + phase.id)
+    document.getElementById("admin-phase-name")?.scrollIntoView({block:"center", behavior:"smooth"})
+}
