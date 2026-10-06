@@ -1,0 +1,11 @@
+Kurogetsu — imagens nas dimensões originais
+
+running.png: 440x32, 10 quadros de 44x32
+attacking.png: 434x42, 7 quadros de 62x42
+idle.png: 330x35, 11 quadros de 30x35
+jumping.png: 128x42, 4 quadros de 32x42
+slash.png: 615x30, 5 quadros de 123x30
+
+PNG com transparência; redimensionamento por vizinho mais próximo.
+Removidas as margens vazias grandes e centralizados os sprites por célula.
+Mantida a arte gerada; dimensões verificadas. A animação ainda não foi testada no jogo e pode precisar de ajustes nas poses e recortes.
