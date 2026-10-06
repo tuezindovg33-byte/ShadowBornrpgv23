@@ -1,7 +1,7 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
-const canvasWidth = 1024
+let canvasWidth = 1024
 const canvasHeight = 576
 
 canvas.width = canvasWidth
@@ -15,6 +15,22 @@ let lag = 0;
 
 // Câmera: segue o jogador horizontalmente conforme ele anda pelo mapa
 let camera = { x: 0 };
+// V23.5: usa a proporção da tela horizontal sem esticar sprites ou alterar o chão.
+function resizeGameViewport() {
+ const wrapper=document.getElementById('game-wrapper');if(!wrapper)return;
+ const w=wrapper.clientWidth,h=wrapper.clientHeight;if(w<1||h<1)return;
+ const mobile=/Android/i.test(navigator.userAgent)||matchMedia('(pointer:coarse)').matches;
+ const wide=mobile&&w/h>=1024/576;
+ const next=wide?Math.round(576*w/h):1024;
+ if(next!==canvasWidth){canvasWidth=next;canvas.width=next;ctx.imageSmoothingEnabled=false;}
+ camera.x=Math.max(0,Math.min(camera.x,worldWidth-canvasWidth));
+ // Na horizontal o raster acompanha o viewport, com escala uniforme.
+ canvas.style.objectFit=mobile?(wide?'fill':'contain'):'';
+}
+window.addEventListener('resize',resizeGameViewport);
+window.addEventListener('orientationchange',()=>requestAnimationFrame(resizeGameViewport));
+document.addEventListener('DOMContentLoaded',()=>{resizeGameViewport();if(typeof ResizeObserver!=='undefined')new ResizeObserver(resizeGameViewport).observe(document.getElementById('game-wrapper'));});
+
 
 function updateCamera() {
     // "Zona morta": a câmera só se move quando o jogador sai dessa faixa central,
@@ -52,7 +68,7 @@ function drawBackgroundTiles() {
 
     const paintBackground = (x) => {
         // Um pixel de sobreposição evita frestas na escala do canvas.
-        const drawWidth = canvasWidth + 1;
+        const drawWidth = 1024 + 1;
         if (currentPhase.groundSource) {
             const cut = Math.round(bgImage.naturalHeight * currentPhase.groundSource);
             const groundY = canvasHeight - floorHeight;
@@ -60,7 +76,7 @@ function drawBackgroundTiles() {
             ctx.drawImage(bgImage,0,cut,bgImage.naturalWidth,bgImage.naturalHeight-cut,x,groundY,drawWidth,floorHeight);
         } else ctx.drawImage(bgImage,x,0,drawWidth,canvasHeight);
     };
-    const bgWidth = canvasWidth;
+    const bgWidth = 1024;
     const backgroundCameraX = Math.round(camera.x);
     const firstTile = Math.floor(backgroundCameraX / bgWidth);
     const lastTile = Math.floor((backgroundCameraX + canvasWidth) / bgWidth);
