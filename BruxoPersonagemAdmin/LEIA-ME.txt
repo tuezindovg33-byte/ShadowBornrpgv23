@@ -1,0 +1,11 @@
+NOCTHAR — TESTE HD 4X
+Abra TESTAR-HD.html após extrair o ZIP. Compare as duas versões no mesmo tamanho visual, selecione cada animação e use Pausar/slider para conferir os quadros.
+
+hd-4x/ contém as cinco folhas HD; original/ contém os PNGs pequenos anteriores.
+As folhas HD foram exportadas das artes maiores. Preservam os mesmos quadros e áreas de alinhamento, com mais pixels para representar os detalhes. Não são simples ampliações dos PNGs pequenos.
+
+O renderizador deve recortar as células HD e desenhar na mesma largura/altura visual anterior: divida a escala de desenho da imagem por quatro, ou use as dimensões drawFrameWidth/drawFrameHeight de frames-hd.json.
+Não substitua folhas que usam escala fixa sem ajustar o desenho, principalmente slash, para evitar que o efeito fique quatro vezes maior.
+
+Dimensões HD: idle 1320x140 (11), running 1760x128 (10), jumping 512x168 (4), attacking 1736x168 (7), slash 2460x120 (5).
+Conferidas transparência, quantidade e presença dos quadros e diferenças reais de detalhe em relação à simples ampliação. Prévia com JavaScript validado sintaticamente. Não foi alterado nem testado o jogo hospedado ou APK.

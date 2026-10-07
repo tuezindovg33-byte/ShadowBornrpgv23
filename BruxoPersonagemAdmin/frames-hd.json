@@ -1,0 +1,56 @@
+{
+  "idle": {
+    "frames": 11,
+    "width": 1320,
+    "height": 140,
+    "frameWidth": 120,
+    "frameHeight": 140,
+    "framesPerSpriteFrame": 18,
+    "sourceScale": 4,
+    "drawFrameWidth": 30,
+    "drawFrameHeight": 35
+  },
+  "running": {
+    "frames": 10,
+    "width": 1760,
+    "height": 128,
+    "frameWidth": 176,
+    "frameHeight": 128,
+    "framesPerSpriteFrame": 8,
+    "sourceScale": 4,
+    "drawFrameWidth": 44,
+    "drawFrameHeight": 32
+  },
+  "jumping": {
+    "frames": 4,
+    "width": 512,
+    "height": 168,
+    "frameWidth": 128,
+    "frameHeight": 168,
+    "framesPerSpriteFrame": 8,
+    "sourceScale": 4,
+    "drawFrameWidth": 32,
+    "drawFrameHeight": 42
+  },
+  "attacking": {
+    "frames": 7,
+    "width": 1736,
+    "height": 168,
+    "frameWidth": 248,
+    "frameHeight": 168,
+    "framesPerSpriteFrame": 8,
+    "sourceScale": 4,
+    "drawFrameWidth": 62,
+    "drawFrameHeight": 42
+  },
+  "slash": {
+    "frames": 5,
+    "width": 2460,
+    "height": 120,
+    "frameWidth": 492,
+    "frameHeight": 120,
+    "sourceScale": 4,
+    "drawFrameWidth": 123,
+    "drawFrameHeight": 30
+  }
+}

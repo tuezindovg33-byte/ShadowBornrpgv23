@@ -1,0 +1,52 @@
+[
+  {
+    "image": "idle",
+    "dimensions": [
+      1320,
+      140
+    ],
+    "frames": 11,
+    "distinctFrames": true,
+    "newDetailBeyondUpscale": true
+  },
+  {
+    "image": "running",
+    "dimensions": [
+      1760,
+      128
+    ],
+    "frames": 10,
+    "distinctFrames": true,
+    "newDetailBeyondUpscale": true
+  },
+  {
+    "image": "jumping",
+    "dimensions": [
+      512,
+      168
+    ],
+    "frames": 4,
+    "distinctFrames": true,
+    "newDetailBeyondUpscale": true
+  },
+  {
+    "image": "attacking",
+    "dimensions": [
+      1736,
+      168
+    ],
+    "frames": 7,
+    "distinctFrames": true,
+    "newDetailBeyondUpscale": true
+  },
+  {
+    "image": "slash",
+    "dimensions": [
+      2460,
+      120
+    ],
+    "frames": 5,
+    "distinctFrames": true,
+    "newDetailBeyondUpscale": true
+  }
+]
