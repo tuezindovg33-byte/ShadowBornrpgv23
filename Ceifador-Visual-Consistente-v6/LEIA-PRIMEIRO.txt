@@ -1,0 +1,8 @@
+CEIFADOR — VISUAL CONSISTENTE V6
+
+Idle aprovado preservado exatamente. Corrida, pulo e ataque refeitos tendo esse idle como referência, com lâmina prateada e interior da foice transparente.
+Substitua running.png, jumping.png e attacking.png. Use todos da pasta da mesma resolução que já utiliza: original/ ou hd-4x/.
+O idle do pack é idêntico ao anterior. Corte e ícone preservados.
+Quadros: idle 11; corrida 10; pulo 4; ataque 7; corte 5. Dimensões originais mantidas.
+PREVIA.html mostra as transições; TESTAR-HD.html permite ver cada quadro.
+Nenhum código do jogo foi modificado. Validação local das imagens; não foi testado na sua conta do jogo.
