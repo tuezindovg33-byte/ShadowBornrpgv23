@@ -1,0 +1,13 @@
+LUFFY ADMIN — REVISÃO DE QUALIDADE
+
+Na raiz: PNGs no tamanho original, mesma quantidade de quadros.
+Na pasta hd-4x: folhas com células 4x maiores, exportadas da arte de maior resolução; não são mera ampliação do PNG pequeno.
+HD exige alterar o tamanho do recorte dos quadros na renderização do jogo; mantenha drawWidth/drawHeight originais para não aumentar o personagem. frames.json contém essas medidas.
+Não substitua diretamente arquivos originais pela versão HD sem ajustar o código do jogo.
+
+Transparência binária (0 ou255): resíduos de baixa opacidade e componentes minúsculos removidos nos personagens. Slash conserva suas partículas intencionais. Ícone incluído.
+PREVIA.html permite comparar original/HD e fundos claro, escuro e quadriculado.
+
+Dimensões, transparência, presença dos quadros, sintaxe da prévia e integridade do ZIP conferidas. Sem teste no jogo ou navegador neste ambiente.
+As folhas recriadas têm pequenas diferenças em relação às poses anteriores. O formato original oferece menos detalhes por ter poucos pixels.
+Arte refinada com geração de imagens integrada: preservar Luffy aprovado e poses, retirar sujeira, halos e sobras de recorte.
