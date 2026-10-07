@@ -1,0 +1,11 @@
+CEIFADOR DE ALMAS
+
+Pack de imagens, sem alterações no jogo.
+original/: mesmas dimensões e contagens de quadros dos modelos enviados.
+hd-4x/: reexportação de maior resolução, com células quatro vezes maiores; configure a mesma escala visual do personagem. Não misture pastas.
+idle 11 quadros; running 10; jumping 4; attacking 7; slash 5.
+icon.png: ícone estático 128x128 para a loja.
+PREVIA.html e previas/: demonstração das animações.
+Use URLs permanentes e diretas de cada PNG no cadastro do personagem.
+As poses são recriações artísticas, não cópias exatas das animações do samurai. Valide a prévia e o encaixe no jogo antes de publicar.
+Arte criada com geração de imagens integrada; exportação com transparência e células fixas.

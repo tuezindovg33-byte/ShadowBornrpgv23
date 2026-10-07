@@ -1,0 +1,9 @@
+CORRIDA V2 — CEIFADOR
+
+Troque somente a URL de running.png no cadastro do personagem.
+Original: 440x32, 10 quadros de 44x32.
+HD: 1760x128, 10 quadros de 176x128.
+Use a pasta da mesma resolução que já utiliza.
+As outras animações e o ícone são os mesmos do pack anterior.
+PREVIA.html mostra todas as animações; previas/running.gif mostra a corrida corrigida.
+Nenhum arquivo do jogo foi modificado.

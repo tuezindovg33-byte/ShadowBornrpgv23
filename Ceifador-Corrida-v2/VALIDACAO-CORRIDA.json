@@ -1,0 +1,15 @@
+{
+  "frames": 10,
+  "uniformScale": 0.07977207977207977,
+  "unchanged": [
+    "original/idle.png",
+    "original/jumping.png",
+    "original/attacking.png",
+    "original/slash.png",
+    "hd-4x/idle.png",
+    "hd-4x/jumping.png",
+    "hd-4x/attacking.png",
+    "hd-4x/slash.png",
+    "icon.png"
+  ]
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "file": "original/idle.png",
+    "size": [
+      330,
+      35
+    ],
+    "frames": 11
+  },
+  {
+    "file": "original/running.png",
+    "size": [
+      440,
+      32
+    ],
+    "frames": 10
+  },
+  {
+    "file": "original/jumping.png",
+    "size": [
+      128,
+      42
+    ],
+    "frames": 4
+  },
+  {
+    "file": "original/attacking.png",
+    "size": [
+      434,
+      42
+    ],
+    "frames": 7
+  },
+  {
+    "file": "original/slash.png",
+    "size": [
+      615,
+      30
+    ],
+    "frames": 5
+  },
+  {
+    "file": "hd-4x/idle.png",
+    "size": [
+      1320,
+      140
+    ],
+    "frames": 11
+  },
+  {
+    "file": "hd-4x/running.png",
+    "size": [
+      1760,
+      128
+    ],
+    "frames": 10
+  },
+  {
+    "file": "hd-4x/jumping.png",
+    "size": [
+      512,
+      168
+    ],
+    "frames": 4
+  },
+  {
+    "file": "hd-4x/attacking.png",
+    "size": [
+      1736,
+      168
+    ],
+    "frames": 7
+  },
+  {
+    "file": "hd-4x/slash.png",
+    "size": [
+      2460,
+      120
+    ],
+    "frames": 5
+  }
+]
