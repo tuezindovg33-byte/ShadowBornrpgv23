@@ -1,0 +1,46 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Luffy — comparação de animações</title><style>body{background:#11151d;color:#eee2c4;font:16px system-ui;margin:32px}h1{color:#e9bd62}button,select,input{font:inherit;margin:8px;padding:8px;background:#242b36;color:#ffe4a3;border:1px solid #836b38}main{display:flex;flex-wrap:wrap;gap:24px}figure{margin:0;background:#1b2330;padding:20px}canvas{background:repeating-conic-gradient(#17202b 0 25%,#1d2734 0 50%) 0/24px 24px;max-width:100%;image-rendering:pixelated}figcaption{padding:12px 0}p{max-width:850px;line-height:1.5}</style><h1>Luffy — tamanho original</h1><p>As folhas mantêm as dimensões e a quantidade de quadros da referência. A aparência e as poses foram recriadas; esta comparação permite conferir as diferenças visuais. O slash é o arquivo original sem alterações.</p><select id="mode"><option>idle</option><option>running</option><option>jumping</option><option>attacking</option><option>slash</option></select><button id="play">Pausar</button><input type="range" id="frame" min="0" value="0"><span id="counter"></span><main><figure><canvas id="original"></canvas><figcaption>Referência enviada</figcaption></figure><figure><canvas id="luffy"></canvas><figcaption>Luffy recriado</figcaption></figure></main><p id="dimensions"></p><script>
+const config={
+  "idle": {
+    "frames": 11,
+    "width": 330,
+    "height": 35,
+    "frameWidth": 30,
+    "frameHeight": 35,
+    "framesPerSpriteFrame": 18
+  },
+  "running": {
+    "frames": 10,
+    "width": 440,
+    "height": 32,
+    "frameWidth": 44,
+    "frameHeight": 32,
+    "framesPerSpriteFrame": 8
+  },
+  "jumping": {
+    "frames": 4,
+    "width": 128,
+    "height": 42,
+    "frameWidth": 32,
+    "frameHeight": 42,
+    "framesPerSpriteFrame": 8
+  },
+  "attacking": {
+    "frames": 7,
+    "width": 434,
+    "height": 42,
+    "frameWidth": 62,
+    "frameHeight": 42,
+    "framesPerSpriteFrame": 8
+  },
+  "slash": {
+    "frames": 5,
+    "width": 615,
+    "height": 30,
+    "frameWidth": 123,
+    "frameHeight": 30,
+    "unchangedOriginal": true
+  }
+};let mode='idle',index=0,playing=true,last=0;const images={};for(const k of Object.keys(config)){images[k]=[new Image(),new Image()];images[k][0].src='originais/'+k+'.png';images[k][1].src=k+'.png';images[k].forEach(im=>im.onload=draw);}
+function draw(){const s=config[mode];document.getElementById('frame').max=s.frames-1;document.getElementById('frame').value=index;document.getElementById('counter').textContent=(index+1)+' / '+s.frames;document.getElementById('dimensions').textContent=s.width+' × '+s.height+' pixels — '+s.frames+' quadros de '+s.frameWidth+' × '+s.frameHeight;['original','luffy'].forEach((id,n)=>{const c=document.getElementById(id);c.width=s.frameWidth*8;c.height=s.frameHeight*8;const x=c.getContext('2d');x.imageSmoothingEnabled=false;const im=images[mode]?.[n];if(im?.complete&&im.naturalWidth)x.drawImage(im,index*s.frameWidth,0,s.frameWidth,s.frameHeight,0,0,c.width,c.height);});}
+document.getElementById('mode').onchange=e=>{mode=e.target.value;index=0;last=0;draw()};document.getElementById('play').onclick=()=>{playing=!playing;document.getElementById('play').textContent=playing?'Pausar':'Reproduzir'};document.getElementById('frame').oninput=e=>{playing=false;document.getElementById('play').textContent='Reproduzir';index=Number(e.target.value);draw()};function tick(t){const duration=(config[mode].framesPerSpriteFrame||3)*1000/60;if(playing&&t-last>=duration){index=(index+1)%config[mode].frames;last=t;draw();}requestAnimationFrame(tick)}draw();requestAnimationFrame(tick);
+</script></html>

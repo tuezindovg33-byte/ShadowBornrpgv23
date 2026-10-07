@@ -1,0 +1,17 @@
+LUFFY — FOLHAS NO FORMATO ORIGINAL
+
+idle.png: 330x35 — 11 quadros de 30x35
+running.png: 440x32 — 10 quadros de 44x32
+jumping.png: 128x42 — 4 quadros de 32x42
+attacking.png: 434x42 — 7 quadros de 62x42
+slash.png: 615x30 — 5 quadros de 123x30
+
+Os PNGs têm fundo transparente. Cada personagem ocupa a área de referência do respectivo quadro, sem margens adicionais na folha.
+Use as folhas PNG da raiz do pacote no cadastro de personagem. Os arquivos na pasta originais são apenas a referência para comparação.
+A velocidade das animações depende do renderizador do jogo; a quantidade e a ordem dos quadros são mantidas. frames.json inclui os dados de recorte e os intervalos do personagem padrão.
+PREVIA.html abre localmente e reproduz os dois personagens lado a lado. Pode pausar e escolher quadro.
+PREVIA.png é ampliada para conferência; NÃO é uma spritesheet para cadastro.
+
+LIMITAÇÃO VISUAL: as poses e os movimentos do Luffy foram recriados por geração de imagens a partir da referência. Não são uma cópia exata, pixel por pixel, da animação original. Dimensões, células e contagem de quadros são exatas; o slash original foi preservado integralmente. Pequenas diferenças de postura, espada e bandeirinha permanecem. Para igualdade exata de movimento seria necessário redesenhar/retocar cada quadro sobre a referência.
+
+Não foram alterados os arquivos do jogo ou outros personagens.
